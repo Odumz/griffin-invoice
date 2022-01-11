@@ -4,14 +4,44 @@
 </script>
 
 <template>
-  <router-view/>
+  <router-view />
 </template>
 
 <style>
-#app {
+* {
+  @apply m-0 p-0 box-border bg-dark-blue;
   font-family: "Public Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+}
+
+button,
+.button {
+  @apply cursor-pointer py-4 px-6 rounded-3xl text-xs mr-2 text-white;
+}
+
+.container {
+  @apply w-full py-10 px-2 max-w-4xl mx-auto;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: initial;
+}
+
+.status-button {
+  @apply before:content-[''] before:w-2 before:h-2 before:rounded-full before:mr-2 text-xs mr-8 items-center py-2 px-8 rounded-lg;
+}
+
+.paid {
+  @apply before:bg-green text-green bg-paid bg-opacity-10;
+}
+
+.pending {
+  @apply before:bg-orange text-orange bg-pending bg-opacity-10;
+}
+
+.draft {
+  @apply before:bg-draft text-draft bg-draft bg-opacity-10;
 }
 </style>

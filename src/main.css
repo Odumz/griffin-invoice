@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --color-dark-blue: 20, 22, 37;
+        --color-dark-purple: 37, 41, 69;
+        --color-red: 236, 87, 87;
+        --color-purple: 124, 93, 250;
+        --color-green: 51, 214, 159;
+        --color-orange: 255, 143, 0;
+        --color-paid: 51, 214, 160;
+        --color-pending: 255, 145, 0;
+        --color-draft: 223, 227, 250;
+    }
+}
