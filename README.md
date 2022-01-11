@@ -1,8 +1,8 @@
-# Vue 3 + TailwindCSS + VueX + Typescript + Vite
+# Griffin Invoice Application
 
-This template should help get you started developing with Vue 3, Tailwind CSS, Vuex and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A simple invoicing application for GriffinTech. It is a well optimized, easy to use, and easy to maintain application that generates invoices for your customers.
 
-This starter uses Public Sans from google fonts, check out the [public sans docs](https://fonts.google.com/specimen/Public+Sans) to learn more.
+This application uses Public Sans from google fonts, check out the [public sans docs](https://fonts.google.com/specimen/Public+Sans) to learn more.
 
 ## Recommended IDE Setup
 
