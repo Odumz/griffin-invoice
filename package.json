@@ -1,6 +1,21 @@
 {
-  "name": "griffin-invoice",
+  "name": "vite-tailwind-vuex-starter",
   "version": "0.0.0",
+  "description": "a simple vite-tailwind-vuex-starter",
+  "author": {
+    "name": "Oluwashina Odumosu",
+    "email": "odumz20@gmail.com",
+    "url": "https://github.com/Odumz/vite-tailwind-vuex-starter"
+  },
+  "keywords": [
+    "vite",
+    "tailwind",
+    "vuex",
+    "starter",
+    "vite-tailwind-vuex-starter",
+    "invoice-app",
+    "store"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",

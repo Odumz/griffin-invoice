@@ -1,6 +1,8 @@
-# Vue 3 + Typescript + Vite
+# Vue 3 + TailwindCSS + VueX + Typescript + Vite
 
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This template should help get you started developing with Vue 3, Tailwind CSS, Vuex and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+
+This starter uses Public Sans from google fonts, check out the [public sans docs](https://fonts.google.com/specimen/Public+Sans) to learn more.
 
 ## Recommended IDE Setup
 
