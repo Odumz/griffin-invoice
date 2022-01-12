@@ -2,6 +2,8 @@
 
 A simple invoicing application for GriffinTech. It is a well optimized, easy to use, and easy to maintain application that generates invoices for your customers.
 
+Check out the [demo application here](https://griffin-invoice.vercel.app/)!
+
 This application uses Public Sans from google fonts, check out the [public sans docs](https://fonts.google.com/specimen/Public+Sans) to learn more.
 
 ## Recommended IDE Setup

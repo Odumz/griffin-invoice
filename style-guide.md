@@ -8,19 +8,20 @@ The designs were created to the following widths:
 - Desktop: 1440px
 
 ## Colors
-
 ### Primary
 
-- Dark Blue: hsl(233, 26%, 24%)
-- Lime Green: hsl(136, 65%, 51%)
-- Bright Cyan: hsl(192, 70%, 51%)
+- Dark Blue: rgb(20, 22, 37);
+- Dark Purple: rgb(37, 41, 69);
+- Red: rgb(236, 87, 87);
+- Purple: rgb(124, 93, 250);
 
-### Neutral
+### Status
 
-- Grayish Blue: hsl(233, 8%, 62%)
-- Light Grayish Blue: hsl(220, 16%, 96%)
-- Very Light Gray: hsl(0, 0%, 98%)
-- White: hsl(0, 0%, 100%)
+- Green: rgb(51, 214, 159);
+- Orange: rgb(255, 143, 0);
+- Paid: rgb(51, 214, 160);
+- Pending: rgb(255, 145, 0);
+- Draft: rgb(223, 227, 250);
 
 ## Typography
 
