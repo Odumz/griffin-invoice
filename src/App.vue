@@ -15,7 +15,7 @@ import Navigation from './components/Navigation.vue';
 </div>
 </template>
 
-<style>
+<style lang="scss">
 * {
   @apply m-0 p-0 box-border;
   font-family: "Public Sans", sans-serif;
@@ -25,10 +25,9 @@ import Navigation from './components/Navigation.vue';
 
 .app {
   @apply bg-dark-blue flex-col min-h-screen dl:flex-row;
-}
-
-.app-content {
-  @apply py-0 px-5 flex-1 relative;  
+  .app-content {
+    @apply py-0 px-5 flex-1 relative;  
+  }
 }
 
 button,
