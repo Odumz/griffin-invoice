@@ -2,7 +2,7 @@
     <div>
         <header class="flex">
             <div class="branding flex">
-                <img src="../assets/file-invoice-dollar-solid.png" alt="Branding">
+                <img src="../assets/file-invoice-dollar-solid.png" width="30px" height="30px" alt="Branding">
             </div>
         </header>
     </div>
