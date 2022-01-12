@@ -1,18 +1,34 @@
 <script setup lang="ts">
+import Navigation from './components/Navigation.vue';
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 </script>
 
 <template>
-  <router-view />
+<div>
+  <div class="app flex">
+    <Navigation />
+    <div class="app-content flex flex-col">
+      <router-view />
+    </div>
+  </div>
+</div>
 </template>
 
 <style>
 * {
-  @apply m-0 p-0 box-border bg-dark-blue;
+  @apply m-0 p-0 box-border;
   font-family: "Public Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.app {
+  @apply bg-dark-blue flex-col min-h-screen dl:flex-row;
+}
+
+.app-content {
+  @apply py-0 px-5 flex-1 relative;  
 }
 
 button,
@@ -21,7 +37,7 @@ button,
 }
 
 .container {
-  @apply w-full py-10 px-2 max-w-4xl mx-auto;
+  @apply w-full py-10 px-2 max-w-4xl mx-auto dl:pt-20;
 }
 
 .nav-link {
