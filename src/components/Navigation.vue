@@ -1,0 +1,25 @@
+<template>
+    <div>
+        <header class="flex">
+            <div class="branding flex">
+                <img src="../assets/file-invoice-dollar-solid.png" alt="Branding">
+            </div>
+        </header>
+    </div>
+</template>
+
+<script setup lang="ts">
+
+</script>
+
+<style lang="scss" scoped>
+header {
+    @apply z-99 flex-row bg-dark-purple dl:min-h-full dl:min-w-45 dl:flex-col dl:rounded-tr-2xl dl:rounded-b-2xl;
+    .branding {
+        @apply rounded-tr-2xl rounded-br-2xl bg-purple justify-center p-6 dl:w-full;
+        img {
+            @apply w-auto h-8
+        }
+    }
+}
+</style>
