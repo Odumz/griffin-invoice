@@ -1,3 +1,18 @@
+<script setup lang="ts">
+import { ref, reactive } from 'vue'
+
+// const billerStreetAddress:string, billerCity:string, billerZipCode:string, billerCountry:string, clientEmail:string, clientName:string, clientStreetAddress:string, clientCity:string, clientZipCode:string, clientCountry:string, invoiceDateUnix:string, invoiceDate:string, paymentTerms:string, paymentDueDate:string, paymentDueDateUnix:string, productDescription:string, invoicePending:any, invoiceDraft:any = ref(null);
+
+const invoiceItemList:any = reactive([]);
+
+const invoiceTotal:any = ref(0);
+
+const checkClick:any = () => {}
+
+const submitForm:any = () => {}
+
+</script>
+
 <template>
     <div>
         <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-col">
@@ -119,21 +134,6 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref, reactive } from 'vue'
-
-// const billerStreetAddress:string, billerCity:string, billerZipCode:string, billerCountry:string, clientEmail:string, clientName:string, clientStreetAddress:string, clientCity:string, clientZipCode:string, clientCountry:string, invoiceDateUnix:string, invoiceDate:string, paymentTerms:string, paymentDueDate:string, paymentDueDateUnix:string, productDescription:string, invoicePending:any, invoiceDraft:any = ref(null);
-
-const invoiceItemList:any = reactive([]);
-
-const invoiceTotal:any = ref(0);
-
-const checkClick:any = () => {}
-
-const submitForm:any = () => {}
-
-</script>
 
 <style lang="scss" scoped>
 .invoice-wrap {
