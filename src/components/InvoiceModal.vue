@@ -36,6 +36,14 @@ watch: {
 
 const checkClick:any = () => {}
 
+const deleteInvoiceItem:any = () => {}
+
+const addNewInvoiceItem:any = () => {}
+
+const saveDraft:any = () => {}
+
+const publishInvoice:any = () => {}
+
 const submitForm:any = () => {}
 
 invoiceDateUnix = Date.now()
