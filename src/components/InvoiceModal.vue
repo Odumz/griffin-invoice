@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import * as mutationTypes from '../store/constants/mutations';
 
@@ -7,7 +7,9 @@ const store = useStore();
 
 const name = "InvoiceModal"
 
-let billerStreetAddress:string, billerCity:string, billerZipCode:string, billerCountry:string, clientEmail:string, clientName:string, clientStreetAddress:string, clientCity:string, clientZipCode:string, clientCountry:string, invoiceDateUnix:number, invoiceDate:string, paymentTerms:any, paymentDueDate:string, paymentDueDateUnix:number, productDescription:string, invoicePending:any, invoiceDraft:any = ref(null);
+let billerStreetAddress:any, billerCity:any, billerZipCode:any, billerCountry:any, clientEmail:any, clientName:any, clientStreetAddress:any, clientCity:any, clientZipCode:any, clientCountry:any, invoiceDateUnix:number, invoiceDate:any, paymentDueDateUnix:number, productDescription:any, invoicePending:any, invoiceDraft:any, welcome:any = ref('');
+
+let paymentTerms:any = ref('')
 
 let dateOptions:any = {
     year: "numeric",
@@ -15,24 +17,24 @@ let dateOptions:any = {
     day: "numeric"
 };
 
+invoiceDateUnix = Date.now()
+invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
+
+let paymentDueDate:any = ref('')
+
 const invoiceItemList:any = reactive([]);
 
 const invoiceTotal:any = ref(0);
 
-// watch(paymentTerms, (newSelection: any) => {
-//     const futureDate:Date = new Date();
-//     paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(paymentTerms))
-//     paymentDueDate = new Date(paymentDueDateUnix).toLocaleDateString('en-us', dateOptions)
-// })
-
-watch: {
-    paymentTerms = () => {
-        console.log('tag', paymentTerms)
-        const futureDate:Date = new Date();
-        paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(paymentTerms))
-        paymentDueDate = new Date(paymentDueDateUnix).toLocaleDateString('en-us', dateOptions)
-    }
-}
+watch(paymentTerms, (oldTerms: any, newTerms: any) => {
+    const futureDate = new Date();
+    paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(paymentTerms.value));
+    nextTick()
+        .then(function () {
+            // DOM updated
+            paymentDueDate.value = new Date(paymentDueDateUnix).toLocaleDateString('en-us', dateOptions);
+        })    
+})
 
 const checkClick:any = () => {}
 
@@ -45,9 +47,6 @@ const saveDraft:any = () => {}
 const publishInvoice:any = () => {}
 
 const submitForm:any = () => {}
-
-invoiceDateUnix = Date.now()
-invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
 
 const invoiceData = computed(() => {
     return store.getters.getInvoiceData
@@ -136,7 +135,7 @@ const closeInvoice = async () => {
                     </div>
                     <div class="input flex flex-col">
                         <label for="paymentTerms">Payment Terms</label>
-                        <select type="text" id="paymentTerms" required v-model="paymentTerms">
+                        <select id="paymentTerms" required v-model="paymentTerms">
                             <option value="30">Net 30 Days</option>
                             <option value="60">Net 60 Days</option>
                         </select>
