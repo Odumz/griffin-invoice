@@ -1,8 +1,7 @@
 import { createStore } from 'vuex'
 import * as actionTypes from './constants/actions'
 import * as mutationTypes from './constants/mutations'
-import { ToggleInvoice, ToggleModal, SetInvoiceData, InvoicesLoaded, SetCurrentInvoice } from './constants/mutations';
-import { UpdateStatusToPaid } from './constants/actions';
+import { computed } from 'vue'
 
 const store = createStore({
     state: {
@@ -12,6 +11,38 @@ const store = createStore({
         invoicesLoaded:<boolean> false,
         currentInvoiceArray: null,
         editInvoice:<boolean> false,
+    },
+    getters: {
+        getInvoiceModal: (state) => {
+            return computed(() => {
+                return state.invoiceModal
+            })
+        },
+        getInvoiceData: (state) => {
+            return computed(() => {
+                return state.invoiceData
+            })
+        },
+        getInvoicesLoaded: (state) => {
+            return computed(() => {
+                return state.invoicesLoaded
+            })
+        },
+        getModalActive: (state) => {
+            return computed(() => {
+                return state.modalActive
+            })
+        },
+        getEditInvoice: (state) => {
+            return computed(() => {
+                return state.editInvoice
+            })
+        },
+        getcurrentInvoiceArray: (state) => {
+            return computed(() => {
+                return state.currentInvoiceArray
+            })
+        },
     },
     mutations: {
         [mutationTypes.ToggleInvoice] (state) {

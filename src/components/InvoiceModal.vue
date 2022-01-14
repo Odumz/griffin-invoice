@@ -1,15 +1,57 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, computed, reactive } from 'vue'
+import { useStore } from 'vuex'
+import * as mutationTypes from '../store/constants/mutations';
 
-// const billerStreetAddress:string, billerCity:string, billerZipCode:string, billerCountry:string, clientEmail:string, clientName:string, clientStreetAddress:string, clientCity:string, clientZipCode:string, clientCountry:string, invoiceDateUnix:string, invoiceDate:string, paymentTerms:string, paymentDueDate:string, paymentDueDateUnix:string, productDescription:string, invoicePending:any, invoiceDraft:any = ref(null);
+const store = useStore();
+
+const name = "InvoiceModal"
+
+let billerStreetAddress:string, billerCity:string, billerZipCode:string, billerCountry:string, clientEmail:string, clientName:string, clientStreetAddress:string, clientCity:string, clientZipCode:string, clientCountry:string, invoiceDateUnix:number, invoiceDate:string, paymentTerms:any, paymentDueDate:string, paymentDueDateUnix:number, productDescription:string, invoicePending:any, invoiceDraft:any = ref(null);
+
+let dateOptions:any = {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+};
 
 const invoiceItemList:any = reactive([]);
 
 const invoiceTotal:any = ref(0);
 
+// watch(paymentTerms, (newSelection: any) => {
+//     const futureDate:Date = new Date();
+//     paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(paymentTerms))
+//     paymentDueDate = new Date(paymentDueDateUnix).toLocaleDateString('en-us', dateOptions)
+// })
+
+watch: {
+    paymentTerms = () => {
+        console.log('tag', paymentTerms)
+        const futureDate:Date = new Date();
+        paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(paymentTerms))
+        paymentDueDate = new Date(paymentDueDateUnix).toLocaleDateString('en-us', dateOptions)
+    }
+}
+
 const checkClick:any = () => {}
 
 const submitForm:any = () => {}
+
+invoiceDateUnix = Date.now()
+invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
+
+const invoiceData = computed(() => {
+    return store.getters.getInvoiceData
+})
+
+const invoiceModal = computed(() => {
+    return store.getters.getInvoiceModal
+})
+
+const closeInvoice = async () => {
+    await store.commit(mutationTypes.ToggleInvoice)
+}
 
 </script>
 

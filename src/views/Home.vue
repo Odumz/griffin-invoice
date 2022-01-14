@@ -1,10 +1,38 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useStore } from 'vuex'
+import * as mutationTypes from '../store/constants/mutations';
+
+const store = useStore();
+
+const name = "Home"
+
+const invoiceData = computed(() => {
+    return store.getters.getInvoiceData
+})
+
+const invoiceModal = computed(() => {
+    return store.getters.getInvoiceModal
+})
+
+const filterMenu = ref(false)
+
+const toggleFilterMenu = () => {
+    filterMenu.value = !filterMenu.value
+}
+
+const newInvoice = async () => {
+    await store.commit(mutationTypes.ToggleInvoice)
+}
+</script>
+
 <template>
     <div class="home container">
         <!-- Header -->
         <div class="header flex">
             <div class="flex left flex-col">
                 <h1>Invoices</h1>
-                <span>There are 4 total invoices here</span>
+                <!-- <span>There are {{ invoiceData.length }} total invoices here</span> -->
             </div>
             <div class="right flex">
                 <div @click="toggleFilterMenu" class="filter flex">
@@ -17,7 +45,7 @@
                         <li>Clear Filter</li>
                     </ul>
                 </div>
-                <div @click="newInvoice" class="button flex">
+                <div @click.prevent="newInvoice" class="button flex">
                     <div class="inner-button flex">
                         <img src="../assets/icon-plus.svg" alt="plus icon">
                     </div>
@@ -83,16 +111,3 @@
     }
 }
 </style>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-    const filterMenu = ref(false)
-
-    const toggleFilterMenu = () => {
-        filterMenu.value = !filterMenu.value
-    }
-
-    const newInvoice = () => {
-        console.log('new invoice')
-    }
-</script>

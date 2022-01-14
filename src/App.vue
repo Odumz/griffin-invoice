@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import Navigation from './components/Navigation.vue';
 import InvoiceModal from './components/InvoiceModal.vue'
+import { computed } from '@vue/reactivity';
+import { useStore } from 'vuex';
+
+const store: any = useStore()
+
+const invoiceModal = computed(() => {
+  return store.getters.getInvoiceModal.value
+})
+
 
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
@@ -11,7 +20,9 @@ import InvoiceModal from './components/InvoiceModal.vue'
   <div class="app flex">
     <Navigation />
     <div class="app-content flex flex-col">
-      <InvoiceModal />
+      <transition name="invoice">
+        <InvoiceModal v-if="invoiceModal" />      
+      </transition>
       <router-view />
     </div>
   </div>
@@ -31,6 +42,16 @@ import InvoiceModal from './components/InvoiceModal.vue'
   .app-content {
     @apply py-0 px-5 flex-1 relative;  
   }
+}
+
+// animated invoice
+.invoice-enter-active,
+.invoice-leave-active {
+  transition: 0.8s ease all;
+}
+.invoice-enter-from,
+.invoice-leave-to {
+  transform: translateX(-700px);
 }
 
 button,
