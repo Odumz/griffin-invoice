@@ -13,6 +13,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'deep-blue': withOpacity('--color-deep-blue'),
         'dark-blue': withOpacity('--color-dark-blue'),
         'dark-purple': withOpacity('--color-dark-purple'),
         'red': withOpacity('--color-red'),
@@ -34,5 +35,4 @@ module.exports = {
       }
     },
   },
-  plugins: [],
 }

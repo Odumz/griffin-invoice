@@ -4,6 +4,7 @@
 
 @layer base {
     :root {
+        --color-deep-blue: 30, 33, 57;
         --color-dark-blue: 20, 22, 37;
         --color-dark-purple: 37, 41, 69;
         --color-red: 236, 87, 87;

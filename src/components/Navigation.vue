@@ -8,17 +8,13 @@
     </div>
 </template>
 
-<script setup lang="ts">
-
-</script>
-
 <style lang="scss" scoped>
 header {
-    @apply z-99 flex-row bg-dark-purple dl:min-h-full dl:min-w-45 dl:flex-col dl:rounded-tr-2xl dl:rounded-b-2xl;
+    @apply z-99 flex-row bg-dark-purple dl:min-h-full dl:min-w-45 dl:flex-col dl:rounded-tr-[20px] dl:rounded-b-[20px];
     .branding {
-        @apply rounded-tr-2xl rounded-br-2xl bg-purple justify-center p-6 dl:w-full;
+        @apply rounded-tr-[20px] rounded-br-[20px] bg-purple justify-center p-6 dl:w-full;
         img {
-            @apply w-auto h-8
+            @apply w-auto h-[30px]
         }
     }
 }
