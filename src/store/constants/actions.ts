@@ -1,0 +1,5 @@
+export const GetInvoices = 'GetInvoices'
+export const UpdateInvoice = 'UpdateInvoice'
+export const DeleteInvoice = 'DeleteInvoice'
+export const UpdateStatusToPaid = 'UpdateStatusToPaid'
+export const UpdateStatusToPending = 'UpdateStatusToPending'
