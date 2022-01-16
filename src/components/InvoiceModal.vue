@@ -5,7 +5,8 @@ import * as mutationTypes from '../store/constants/mutations';
 import { uid } from 'uid';
 import db from '../firebase/firebaseInit';
 import { collection, addDoc } from 'firebase/firestore';
-import { GetInvoices } from '../store/constants/actions';
+import * as actionTypes from '../store/constants/actions';
+import loadingIcon from './loading.vue';
 
 const store = useStore();
 
@@ -47,6 +48,8 @@ watch(paymentTerms, (oldTerms: any, newTerms: any) => {
 
 const checkClick:any = () => {}
 
+let loading:any = ref(false)
+
 const deleteInvoiceItem:any = async (id:string) => {
     let newInvoiceItemList: any = JSON.parse(JSON.stringify(invoiceItemList.invoices));
     invoiceItemList.invoices = newInvoiceItemList.filter((item:any) => item.id != id)
@@ -78,10 +81,16 @@ const publishInvoice:any = () => {
 }
 
 const uploadInvoice:any = async () => {
+
+    console.log('loading', loading.value);
     if (invoiceItemList.invoices <= 0) {
         alert('Please ensure you filled out work items')
         return;
     }
+
+    loading.value = true;
+    console.log('loading', loading.value);
+    
     calcInvoiceTotal();
 
     const invoiceDataTemplate:any = reactive({
@@ -115,8 +124,11 @@ const uploadInvoice:any = async () => {
 
     const database:any = await addDoc(collection(db, 'invoices'), JSON.parse(JSON.stringify(invoiceDataTemplate)));
 
+    loading.value = false;
+    console.log('loading', loading);
+
     store.commit(mutationTypes.ToggleInvoice)
-    store.getters.GetInvoices;
+    // store.dispatch(actionTypes.GetInvoices);
 }
 
 const submitForm:any = () => {
@@ -142,6 +154,7 @@ const closeInvoice = () => {
     <div>
         <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-col">
             <form @submit.prevent="submitForm" class="invoice-content">
+                <loading-icon v-show="loading" />
                 <h1>New Invoice</h1>
                 <!-- Bill From -->
                 <div class="bill-from flex flex-col">
