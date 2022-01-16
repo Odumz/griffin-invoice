@@ -11,7 +11,8 @@ const store = useStore();
 
 const name = "InvoiceModal"
 
-let billerStreetAddress:any, billerCity:any, billerZipCode:any, billerCountry:any, clientEmail:any, clientName:any, clientStreetAddress:any, clientCity:any, clientZipCode:any, clientCountry:any, invoiceDateUnix:number, invoiceDate:any, paymentDueDateUnix:number, productDescription:any, welcome:any = ref('');
+let billerStreetAddress:any = ref('')
+let billerCity:any = ref(''), billerZipCode:any = ref(''), billerCountry:any = ref(''), clientEmail:any = ref(''), clientName:any = ref(''), clientStreetAddress:any = ref(''), clientCity:any = ref(''), clientZipCode:any = ref(''), clientCountry:any = ref(''), invoiceDateUnix:any = ref(0), invoiceDate:any = ref(''), paymentDueDateUnix:any = ref(0), productDescription:any = ref(''), welcome:any = ref('');
 
 let paymentTerms:any = ref('')
 
@@ -110,32 +111,9 @@ const uploadInvoice:any = async () => {
 
     // const invoiceData:any = JSON.parse(JSON.stringify(invoiceDataTemplate));
 
-    const database:any = await addDoc(collection(db, 'invoices'), JSON.parse(JSON.stringify(invoiceDataTemplate)));
+    // console.log('invoice data', JSON.parse(JSON.stringify(invoiceDataTemplate)))
 
-    // await database.set({
-    //     invoiceId: uid(6),
-    //     billerStreetAddress,
-    //     billerCity,
-    //     billerZipCode,
-    //     billerCountry,
-    //     clientName,
-    //     clientEmail,
-    //     clientStreetAddress,
-    //     clientCity,
-    //     clientZipCode,
-    //     clientCountry,
-    //     invoiceDate,
-    //     invoiceDateUnix,
-    //     paymentTerms,
-    //     paymentDueDate,
-    //     paymentDueDateUnix,
-    //     productDescription,
-    //     invoiceItemList,
-    //     invoiceTotal,
-    //     invoicePending,
-    //     invoiceDraft,
-    //     invoicePaid: null,
-    // })
+    const database:any = await addDoc(collection(db, 'invoices'), JSON.parse(JSON.stringify(invoiceDataTemplate)));
 
     store.commit(mutationTypes.ToggleInvoice)
     store.getters.GetInvoices;

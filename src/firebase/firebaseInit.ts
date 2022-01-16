@@ -12,7 +12,7 @@ const firebaseConfig = {
   projectId: "invoice-app-gt",
   storageBucket: "invoice-app-gt.appspot.com",
   messagingSenderId: "6384370703",
-  appId: "1:6384370703:web:5706fa7e4fd22e90f4cf7a"
+  appId: "1:6384370703:web:5706fa7e4fd22e90f4cf7a",
 };
 
 // Initialize Firebase
