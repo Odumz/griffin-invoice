@@ -3,14 +3,19 @@ import { ref, computed, reactive, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import * as mutationTypes from '../store/constants/mutations';
 import { uid } from 'uid';
+import db from '../firebase/firebaseInit';
+import { collection, addDoc } from 'firebase/firestore';
+import { GetInvoices } from '../store/constants/actions';
 
 const store = useStore();
 
 const name = "InvoiceModal"
 
-let billerStreetAddress:any, billerCity:any, billerZipCode:any, billerCountry:any, clientEmail:any, clientName:any, clientStreetAddress:any, clientCity:any, clientZipCode:any, clientCountry:any, invoiceDateUnix:number, invoiceDate:any, paymentDueDateUnix:number, productDescription:any, invoicePending:any, invoiceDraft:any, welcome:any = ref('');
+let billerStreetAddress:any, billerCity:any, billerZipCode:any, billerCountry:any, clientEmail:any, clientName:any, clientStreetAddress:any, clientCity:any, clientZipCode:any, clientCountry:any, invoiceDateUnix:number, invoiceDate:any, paymentDueDateUnix:number, productDescription:any, welcome:any = ref('');
 
 let paymentTerms:any = ref('')
+
+let invoicePending:any, invoiceDraft:any = ref(false)
 
 let dateOptions:any = {
     year: "numeric",
@@ -46,6 +51,13 @@ const deleteInvoiceItem:any = async (id:string) => {
     invoiceItemList.invoices = newInvoiceItemList.filter((item:any) => item.id != id)
 }
 
+const calcInvoiceTotal:any = () => {
+    invoiceTotal = 0;
+    invoiceItemList.invoices.forEach((item:any) => {
+        invoiceTotal += item.total;
+    })
+}
+
 const addNewInvoiceItem:any = async () => {
     await invoiceItemList.invoices.push({
         id: uid(),
@@ -56,11 +68,83 @@ const addNewInvoiceItem:any = async () => {
     })
 }
 
-const saveDraft:any = () => {}
+const saveDraft:any = () => {
+    invoiceDraft = true
+}
 
-const publishInvoice:any = () => {}
+const publishInvoice:any = () => {
+    invoicePending = true
+}
 
-const submitForm:any = () => {}
+const uploadInvoice:any = async () => {
+    if (invoiceItemList.invoices <= 0) {
+        alert('Please ensure you filled out work items')
+        return;
+    }
+    calcInvoiceTotal();
+
+    const invoiceDataTemplate:any = reactive({
+        invoiceId: uid(8),
+        billerStreetAddress,
+        billerCity,
+        billerZipCode,
+        billerCountry,
+        clientName,
+        clientEmail,
+        clientStreetAddress,
+        clientCity,
+        clientZipCode,
+        clientCountry,
+        invoiceDate,
+        invoiceDateUnix,
+        paymentTerms,
+        paymentDueDate,
+        paymentDueDateUnix,
+        productDescription,
+        invoiceItemList,
+        invoiceTotal,
+        invoicePending,
+        invoiceDraft,
+        invoicePaid: null,
+    })
+
+    // const invoiceData:any = JSON.parse(JSON.stringify(invoiceDataTemplate));
+
+    const database:any = await addDoc(collection(db, 'invoices'), JSON.parse(JSON.stringify(invoiceDataTemplate)));
+
+    // await database.set({
+    //     invoiceId: uid(6),
+    //     billerStreetAddress,
+    //     billerCity,
+    //     billerZipCode,
+    //     billerCountry,
+    //     clientName,
+    //     clientEmail,
+    //     clientStreetAddress,
+    //     clientCity,
+    //     clientZipCode,
+    //     clientCountry,
+    //     invoiceDate,
+    //     invoiceDateUnix,
+    //     paymentTerms,
+    //     paymentDueDate,
+    //     paymentDueDateUnix,
+    //     productDescription,
+    //     invoiceItemList,
+    //     invoiceTotal,
+    //     invoicePending,
+    //     invoiceDraft,
+    //     invoicePaid: null,
+    // })
+
+    store.commit(mutationTypes.ToggleInvoice)
+    store.getters.GetInvoices;
+}
+
+const submitForm:any = () => {
+    // if (editInvoice)
+    uploadInvoice()
+}
 
 const invoiceData = computed(() => {
     return store.getters.getInvoiceData
