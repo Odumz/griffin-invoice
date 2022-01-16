@@ -22,6 +22,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "firebase": "^9.6.3",
     "uid": "^2.0.0",
     "vue": "^3.2.25",
     "vue-router": "^4.0.12",
