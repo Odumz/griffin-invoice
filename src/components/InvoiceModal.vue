@@ -2,6 +2,7 @@
 import { ref, computed, reactive, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import * as mutationTypes from '../store/constants/mutations';
+import { uid } from 'uid';
 
 const store = useStore();
 
@@ -22,9 +23,11 @@ invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
 
 let paymentDueDate:any = ref('')
 
-const invoiceItemList:any = reactive([]);
+let invoiceItemList:any = reactive({
+    invoices: []
+});
 
-const invoiceTotal:any = ref(0);
+let invoiceTotal:any = ref(0);
 
 watch(paymentTerms, (oldTerms: any, newTerms: any) => {
     const futureDate = new Date();
@@ -38,9 +41,20 @@ watch(paymentTerms, (oldTerms: any, newTerms: any) => {
 
 const checkClick:any = () => {}
 
-const deleteInvoiceItem:any = () => {}
+const deleteInvoiceItem:any = async (id:string) => {
+    let newInvoiceItemList: any = JSON.parse(JSON.stringify(invoiceItemList.invoices));
+    invoiceItemList.invoices = newInvoiceItemList.filter((item:any) => item.id != id)
+}
 
-const addNewInvoiceItem:any = () => {}
+const addNewInvoiceItem:any = async () => {
+    await invoiceItemList.invoices.push({
+        id: uid(),
+        itemName: '',
+        qty: '',
+        price: 0,
+        total: 0,
+    })
+}
 
 const saveDraft:any = () => {}
 
@@ -56,8 +70,8 @@ const invoiceModal = computed(() => {
     return store.getters.getInvoiceModal
 })
 
-const closeInvoice = async () => {
-    await store.commit(mutationTypes.ToggleInvoice)
+const closeInvoice = () => {
+    store.commit(mutationTypes.ToggleInvoice)
 }
 
 </script>
@@ -153,7 +167,7 @@ const closeInvoice = async () => {
                                 <th class="price">Price</th>
                                 <th class="total">Total</th>
                             </tr>
-                            <tr class="table-items flex" v-for="(item, index) in invoiceItemList" :key="index">
+                            <tr class="table-items flex" v-for="(item, index) in invoiceItemList.invoices" :key="index">
                                 <td class="item-name"><input type="text" v-model="item.itemName"></td>
                                 <td class="qty"><input type="text" v-model="item.qty"></td>
                                 <td class="price"><input type="text" v-model="item.price"></td>
