@@ -8,9 +8,9 @@ import { collection, addDoc } from 'firebase/firestore';
 import * as actionTypes from '../store/constants/actions';
 import loadingIcon from './loading.vue';
 
-const store = useStore();
+const store:any = useStore();
 
-const name = "InvoiceModal"
+const name:string = "InvoiceModal"
 
 let billerStreetAddress:any = ref('')
 let billerCity:any = ref(''), billerZipCode:any = ref(''), billerCountry:any = ref(''), clientEmail:any = ref(''), clientName:any = ref(''), clientStreetAddress:any = ref(''), clientCity:any = ref(''), clientZipCode:any = ref(''), clientCountry:any = ref(''), invoiceDateUnix:any = ref(0), invoiceDate:any = ref(''), paymentDueDateUnix:any = ref(0), productDescription:any = ref(''), welcome:any = ref('');
@@ -27,6 +27,12 @@ let dateOptions:any = {
 
 invoiceDateUnix = Date.now()
 invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
+
+const checkClick = (e:any) => {
+    if (e.target.classList.contains('invoice-wrap')) {
+        store.commit(mutationTypes.ToggleModal)
+    }
+}
 
 let paymentDueDate:any = ref('')
 
@@ -45,8 +51,6 @@ watch(paymentTerms, (oldTerms: any, newTerms: any) => {
             paymentDueDate.value = new Date(paymentDueDateUnix).toLocaleDateString('en-us', dateOptions);
         })    
 })
-
-const checkClick:any = () => {}
 
 let loading:any = ref(false)
 
@@ -152,7 +156,7 @@ const closeInvoice = () => {
 
 <template>
     <div>
-        <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-col">
+        <div @click="checkClick" class="invoice-wrap flex flex-col">
             <form @submit.prevent="submitForm" class="invoice-content">
                 <loading-icon v-show="loading" />
                 <h1>New Invoice</h1>
@@ -261,11 +265,11 @@ const closeInvoice = () => {
                 <!-- Save & Exit -->
                 <div class="save flex">
                     <div class="left">
-                        <button @click="closeInvoice" class="button bg-red">Cancel</button>
+                        <button type="button" @click="closeInvoice" class="button bg-red">Cancel</button>
                     </div>
                     <div class="right flex">
-                        <button @click="saveDraft" class="button bg-dark-purple">Save Draft</button>
-                        <button @click="publishInvoice" class="button bg-purple">Create Invoice</button>
+                        <button type="submit" @click="saveDraft" class="button bg-dark-purple">Save Draft</button>
+                        <button type="submit" @click="publishInvoice" class="button bg-purple">Create Invoice</button>
                     </div>
                 </div>
             </form>
@@ -299,7 +303,7 @@ const closeInvoice = () => {
       .location-details {
           @apply gap-4;
         div {
-            @apply flex-1;
+            @apply flex-[1];
         }
       }
     }
@@ -308,7 +312,7 @@ const closeInvoice = () => {
       .payment {
           @apply gap-6;
         div {
-            @apply flex-1;
+            @apply flex-[1];
         }
       }
       .work-items {
@@ -355,7 +359,7 @@ const closeInvoice = () => {
     .save {
         @apply mt-[60px];
       div {
-          @apply flex-1;
+          @apply flex-[1];
       }
       .right {
           @apply justify-end;

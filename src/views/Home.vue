@@ -65,7 +65,7 @@ const newInvoice = async () => {
 
         .left,
         .right {
-            @apply flex-1;
+            @apply flex-[1];
         }
 
         .right {

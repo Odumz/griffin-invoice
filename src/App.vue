@@ -1,13 +1,28 @@
 <script setup lang="ts">
 import Navigation from './components/Navigation.vue';
 import InvoiceModal from './components/InvoiceModal.vue'
+import Modal from './components/Modal.vue';
+import * as actionTypes from './store/constants/actions';
 import { computed } from '@vue/reactivity';
 import { useStore } from 'vuex';
+import { onMounted } from '@vue/runtime-core';
 
 const store: any = useStore()
 
 const invoiceModal = computed(() => {
   return store.getters.getInvoiceModal.value
+})
+
+onMounted(async () => {
+  await store.dispatch(actionTypes.GetInvoices)
+})
+
+const getInvoicesLoaded:any = computed(() => {
+  return store.getters.getInvoicesLoaded.value
+})
+
+const modalActive: any = computed(() => {
+  return store.getters.getModalActive.value
 })
 
 
@@ -16,10 +31,11 @@ const invoiceModal = computed(() => {
 </script>
 
 <template>
-<div>
+<div v-if="getInvoicesLoaded">
   <div class="app flex">
     <Navigation />
     <div class="app-content flex flex-col">
+      <Modal v-if="modalActive" />
       <transition name="invoice">
         <InvoiceModal v-if="invoiceModal" />      
       </transition>
@@ -40,7 +56,7 @@ const invoiceModal = computed(() => {
 .app {
   @apply bg-dark-blue flex-col min-h-screen dl:flex-row;
   .app-content {
-    @apply py-0 px-5 flex-1 relative;  
+    @apply py-0 px-5 flex-[1] relative;  
   }
 }
 
