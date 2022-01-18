@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useStore } from 'vuex'
+import Invoice from '../components/Invoice.vue'
 import * as mutationTypes from '../store/constants/mutations';
+import * as actionTypes from '../store/constants/actions';
 
 const store = useStore();
 
 const name = "Home"
 
+onMounted(async () => {
+  await store.dispatch(actionTypes.GetInvoices)
+  await store.getters.getInvoiceData
+  console.log('invoices', invoiceData.value)
+})
+
 const invoiceData = computed(() => {
-    return store.getters.getInvoiceData
+    return JSON.parse(JSON.stringify(store.getters.getInvoiceData.value))
 })
 
 const invoiceModal = computed(() => {
@@ -52,6 +60,15 @@ const newInvoice = async () => {
                     <span>New Invoice</span>
                 </div>
             </div>
+        </div>
+        <!-- Invoice List -->
+        <div v-if="invoiceData.length > 0">
+            <Invoice v-for="(invoice, index) in invoiceData" :invoice="invoice" :key="index" />
+        </div>
+        <div v-else class="empty flex flex-col">
+            <img src="../assets/illustration-empty.svg" alt="Empty illustration">
+            <h3>There is nothing here</h3>
+            <p>Create a new invoice by clicking the New Invoice button and get started</p>
         </div>
     </div>
 </template>
@@ -107,6 +124,22 @@ const newInvoice = async () => {
                     }
                 }
             }
+        }
+    }
+
+    .empty {
+        @apply mt-[160px] items-center;
+
+        img {
+            @apply w-[214px] h-[200px];
+        }
+
+        h3 {
+            @apply text-xl mt-10;
+        }
+
+        p {
+            @apply text-center max-w-[224px] text-xs font-light mt-4;
         }
     }
 }
