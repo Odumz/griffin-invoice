@@ -85,15 +85,12 @@ const publishInvoice:any = () => {
 }
 
 const uploadInvoice:any = async () => {
-
-    console.log('loading', loading.value);
     if (invoiceItemList.invoices <= 0) {
         alert('Please ensure you filled out work items')
         return;
     }
 
     loading.value = true;
-    console.log('loading', loading.value);
     
     calcInvoiceTotal();
 
@@ -122,17 +119,12 @@ const uploadInvoice:any = async () => {
         invoicePaid: null,
     })
 
-    // const invoiceData:any = JSON.parse(JSON.stringify(invoiceDataTemplate));
-
-    // console.log('invoice data', JSON.parse(JSON.stringify(invoiceDataTemplate)))
-
     const database:any = await addDoc(collection(db, 'invoices'), JSON.parse(JSON.stringify(invoiceDataTemplate)));
 
     loading.value = false;
-    console.log('loading', loading);
 
     store.commit(mutationTypes.ToggleInvoice)
-    // store.dispatch(actionTypes.GetInvoices);
+    store.dispatch(actionTypes.GetInvoices);
 }
 
 const submitForm:any = () => {

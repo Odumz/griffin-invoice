@@ -12,7 +12,6 @@ const name = "Home"
 onMounted(async () => {
   await store.dispatch(actionTypes.GetInvoices)
   await store.getters.getInvoiceData
-  console.log('invoices', invoiceData.value)
 })
 
 const invoiceData = computed(() => {

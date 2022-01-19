@@ -12,7 +12,7 @@ const store = createStore({
         invoiceData:<any> [],
         modalActive:<boolean> false,
         invoicesLoaded:<boolean> false,
-        currentInvoiceArray: null,
+        currentInvoiceArray:<any> null,
         editInvoice:<boolean> false,
     },
     getters: {
@@ -41,7 +41,7 @@ const store = createStore({
                 return state.editInvoice
             })
         },
-        getcurrentInvoiceArray: (state) => {
+        getCurrentInvoiceArray: (state) => {
             return computed(() => {
                 return state.currentInvoiceArray
             })
@@ -89,8 +89,6 @@ const store = createStore({
     },
     actions: {
         async [actionTypes.GetInvoices] ({ commit, state }) {
-            // const getData:any = db.collection('invoices').get();
-
             const getData:any = await getDocs(collection(db, 'invoices'));
             getData.forEach((doc:any) => {
                 if (!state.invoiceData.some((invoice:any) => invoice.docId === doc.id)) {

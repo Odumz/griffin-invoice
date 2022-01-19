@@ -1,16 +1,8 @@
 <script setup lang="ts">
-import { onMounted, defineProps, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 const props:any = defineProps({
     invoice: Object,
 })
-
-// const test:any = ref('hello')
-
-// onMounted(async () => {
-//   console.log('invoice', props.invoice);
-  
-// })
-// console.log('invoice', props.invoice)
 </script>
 
 <template>

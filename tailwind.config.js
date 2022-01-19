@@ -49,6 +49,10 @@ module.exports = {
           'scrollbar-width': 'none',  /* Firefox */
         }
       })
+    }),
+    plugin(function({ addVariant }) {
+      // Add a second variant, ie second:pb-4
+      addVariant('second', '&:nth-child(2')
     })
   ],
 }
