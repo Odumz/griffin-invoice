@@ -63,7 +63,7 @@ const modalActive: any = computed(() => {
 // animated invoice
 .invoice-enter-active,
 .invoice-leave-active {
-  transition: 0.8s ease all;
+  transition: 0.8s ease-in-out all;
 }
 .invoice-enter-from,
 .invoice-leave-to {

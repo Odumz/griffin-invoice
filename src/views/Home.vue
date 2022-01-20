@@ -28,8 +28,8 @@ const toggleFilterMenu = () => {
     filterMenu.value = !filterMenu.value
 }
 
-const newInvoice = async () => {
-    await store.commit(mutationTypes.ToggleInvoice)
+const newInvoice = () => {
+    store.commit(mutationTypes.ToggleInvoice)
 }
 </script>
 

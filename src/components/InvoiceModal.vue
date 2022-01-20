@@ -4,11 +4,13 @@ import { useStore } from 'vuex'
 import * as mutationTypes from '../store/constants/mutations';
 import { uid } from 'uid';
 import db from '../firebase/firebaseInit';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import * as actionTypes from '../store/constants/actions';
 import loadingIcon from './loading.vue';
+import { useRoute } from 'vue-router';
 
 const store:any = useStore();
+const route:any = useRoute();
 
 const name:string = "InvoiceModal"
 
@@ -18,6 +20,10 @@ let billerCity:any = ref(''), billerZipCode:any = ref(''), billerCountry:any = r
 let paymentTerms:any = ref('')
 
 let invoicePending:any, invoiceDraft:any = ref(false)
+
+const editInvoice = computed(() => {
+    return store.getters.getEditInvoice.value
+})
 
 let dateOptions:any = {
     year: "numeric",
@@ -34,6 +40,8 @@ const checkClick = (e:any) => {
     }
 }
 
+let invoiceListArray:any = ref([])
+
 let paymentDueDate:any = ref('')
 
 let invoiceItemList:any = reactive({
@@ -41,6 +49,8 @@ let invoiceItemList:any = reactive({
 });
 
 let invoiceTotal:any = ref(0);
+
+let docId:any = ref('')
 
 watch(paymentTerms, (oldTerms: any, newTerms: any) => {
     const futureDate = new Date();
@@ -60,20 +70,46 @@ const deleteInvoiceItem:any = async (id:string) => {
 }
 
 const calcInvoiceTotal:any = () => {
-    invoiceTotal = 0;
-    invoiceItemList.invoices.forEach((item:any) => {
-        invoiceTotal += item.total;
-    })
+    if (editInvoice.value) {
+        console.log('invoicelist', JSON.parse(JSON.stringify(invoiceItemList.value)))
+        invoiceListArray = JSON.parse(JSON.stringify(invoiceItemList.value));
+        invoiceTotal = 0;
+        invoiceListArray.invoices.forEach((item:any) => {
+            console.log('item', item)
+            invoiceTotal += item.total;
+        })
+        // invoiceItemList = invoiceListArray;
+    } else {
+        invoiceTotal = 0;
+        invoiceItemList.invoices.forEach((item:any) => {
+            console.log('item', item)
+            invoiceTotal += item.total;
+        })
+    }
 }
 
 const addNewInvoiceItem:any = async () => {
-    await invoiceItemList.invoices.push({
-        id: uid(),
-        itemName: '',
-        qty: '',
-        price: 0,
-        total: 0,
-    })
+    if (editInvoice.value) {
+        console.log('invoicelist', JSON.parse(JSON.stringify(invoiceItemList.value)))
+        invoiceListArray = JSON.parse(JSON.stringify(invoiceItemList.value));
+        console.log('invoiceListArray', invoiceListArray);
+        
+        await invoiceListArray.invoices.push({
+            id: uid(),
+            itemName: '',
+            qty: '',
+            price: 0,
+            total: 0,
+        })
+    } else {
+        invoiceItemList.invoices.push({
+            id: uid(),
+            itemName: '',
+            qty: '',
+            price: 0,
+            total: 0,
+        })   
+    }
 }
 
 const saveDraft:any = () => {
@@ -92,7 +128,7 @@ const uploadInvoice:any = async () => {
 
     loading.value = true;
     
-    calcInvoiceTotal();
+    await calcInvoiceTotal();
 
     const invoiceDataTemplate:any = reactive({
         invoiceId: uid(8),
@@ -124,11 +160,65 @@ const uploadInvoice:any = async () => {
     loading.value = false;
 
     store.commit(mutationTypes.ToggleInvoice)
-    store.dispatch(actionTypes.GetInvoices);
+    await store.dispatch(actionTypes.GetInvoices);
 }
 
+const updateInvoice:any = async () => {
+    console.log('updating invoice', JSON.parse(JSON.stringify(invoiceItemList.value)));
+    invoiceListArray = JSON.parse(JSON.stringify(invoiceItemList.value));
+    if (invoiceListArray.invoices <= 0) {
+        alert('Please ensure you filled out work items')
+        return;
+    }
+
+    loading.value = true;
+    
+    calcInvoiceTotal();
+
+    const invoiceDataTemplate:any = reactive({
+        billerStreetAddress,
+        billerCity,
+        billerZipCode,
+        billerCountry,
+        clientName,
+        clientEmail,
+        clientStreetAddress,
+        clientCity,
+        clientZipCode,
+        clientCountry,
+        paymentTerms,
+        paymentDueDate,
+        paymentDueDateUnix,
+        productDescription,
+        invoiceItemList,
+        invoiceTotal,
+    })
+
+    // console.log('docId', JSON.parse(JSON.stringify(docId.value)))
+    // console.log('route.params.invoiceId', route.params.invoiceId)
+
+    const database:any = await updateDoc(doc(db, 'invoices', JSON.parse(JSON.stringify(docId.value))), JSON.parse(JSON.stringify(invoiceDataTemplate)));
+
+    loading.value = false;
+
+    const data:any = {
+        docId,
+        routeId: route.params.invoiceId,
+    }
+
+    await store.dispatch(actionTypes.UpdateInvoice, data);
+    await store.dispatch(actionTypes.GetInvoices);
+}
+
+let currentInvoiceArray:any = computed(() => {
+    return store.getters.getCurrentInvoiceArray
+})
+
 const submitForm:any = () => {
-    // if (editInvoice)
+    if (editInvoice.value) {
+        updateInvoice();
+        return
+    }
     uploadInvoice()
 }
 
@@ -142,6 +232,41 @@ const invoiceModal = computed(() => {
 
 const closeInvoice = () => {
     store.commit(mutationTypes.ToggleInvoice)
+    if (editInvoice.value) {
+        store.commit(mutationTypes.ToggleEditInvoice)
+    }
+}
+
+if (!editInvoice.value) {
+    invoiceDateUnix = Date.now()
+    invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
+}
+
+if (editInvoice.value) {
+    const currentInvoice:any = currentInvoiceArray;
+    docId = ref(currentInvoice.value.docId);
+    console.log('docId', docId.value)
+    billerStreetAddress = ref(currentInvoice.value.billerStreetAddress);
+    billerCity = ref(currentInvoice.value.billerCity);
+    billerZipCode = ref(currentInvoice.value.billerZipCode);
+    billerCountry = ref(currentInvoice.value.billerCountry);
+    clientEmail = ref(currentInvoice.value.clientEmail);
+    clientName = ref(currentInvoice.value.clientName);
+    clientStreetAddress = ref(currentInvoice.value.clientStreetAddress);
+    clientCity = ref(currentInvoice.value.clientCity);
+    clientZipCode = ref(currentInvoice.value.clientZipCode);
+    clientCountry = ref(currentInvoice.value.clientCountry);
+    invoiceDateUnix = ref(currentInvoice.value.invoiceDateUnix);
+    invoiceDate = ref(currentInvoice.value.invoiceDate);
+    paymentDueDateUnix = ref(currentInvoice.value.paymentDueDateUnix);
+    paymentDueDate = ref(currentInvoice.value.paymentDueDate);
+    productDescription = ref(currentInvoice.value.productDescription);
+    paymentTerms = ref(currentInvoice.value.paymentTerms);
+    invoicePending = ref(currentInvoice.value.invoicePending);
+    invoiceDraft = ref(currentInvoice.value.invoiceDraft);
+    invoiceItemList = ref(currentInvoice.value.invoiceItemList);
+    invoiceTotal = ref(currentInvoice.value.invoiceTotal);
+    console.log(`billerStreetAddress ${billerStreetAddress.value}, billerCity ${billerCity.value}, billerZipCode ${billerZipCode.value}, billerCountry ${billerCountry.value}, clientEmail ${clientEmail.value}, clientName ${clientName.value}, clientStreetAddress ${clientStreetAddress.value}, clientCity ${clientCity.value}, clientZipCode ${clientZipCode.value}, clientCountry ${clientCountry.value}, invoiceDateUnix ${invoiceDateUnix.value}, invoiceDate ${invoiceDate.value}, paymentDueDateUnix ${paymentDueDateUnix.value}, paymentDueDate ${paymentDueDate.value}, productDescription ${productDescription.value}, paymentTerms ${paymentTerms.value}, invoicePending ${invoicePending.value}, invoiceDraft ${invoiceDraft.value}, invoiceItemList ${invoiceItemList.value}, invoiceTotal ${invoiceTotal.value}`)
 }
 
 </script>
@@ -151,7 +276,10 @@ const closeInvoice = () => {
         <div @click="checkClick" class="invoice-wrap flex flex-col">
             <form @submit.prevent="submitForm" class="invoice-content">
                 <loading-icon v-show="loading" />
-                <h1>New Invoice</h1>
+                <h1 v-if="!editInvoice">New Invoice</h1>
+                <h1 v-else>Edit Invoice</h1>
+                <!-- Remove this line -->
+                <p v-if="editInvoice">{{ currentInvoiceArray }}</p>
                 <!-- Bill From -->
                 <div class="bill-from flex flex-col">
                     <h4>Bill From</h4>
@@ -238,14 +366,28 @@ const closeInvoice = () => {
                                 <th class="price">Price</th>
                                 <th class="total">Total</th>
                             </tr>
-                            <tr class="table-items flex" v-for="(item, index) in invoiceItemList.invoices" :key="index">
-                                <td class="item-name"><input type="text" v-model="item.itemName"></td>
-                                <td class="qty"><input type="text" v-model="item.qty"></td>
-                                <td class="price"><input type="text" v-model="item.price"></td>
-                                <td class="total flex">${{ (item.total = item.qty * item.price) }}
-                                    <img @click="deleteInvoiceItem(item.id)" src="../assets/icon-delete.svg" alt="delete icon">
-                                </td>                                
-                            </tr>
+                            <div v-if="!editInvoice">
+                                {{ invoiceItemList }}
+                                <tr class="table-items flex" v-for="(item, index) in invoiceItemList.invoices" :key="index">
+                                    <td class="item-name"><input type="text" v-model="item.itemName"></td>
+                                    <td class="qty"><input type="text" v-model="item.qty"></td>
+                                    <td class="price"><input type="text" v-model="item.price"></td>
+                                    <td class="total flex">${{ (item.total = item.qty * item.price) }}
+                                        <img @click="deleteInvoiceItem(item.id)" src="../assets/icon-delete.svg" alt="delete icon">
+                                    </td>                                
+                                </tr>
+                            </div>  
+                            <div v-else>
+                                {{ invoiceListArray }}
+                                <tr class="table-items flex" v-for="(item, index) in invoiceListArray.invoices" :key="index">
+                                    <td class="item-name"><input type="text" v-model="item.itemName"></td>
+                                    <td class="qty"><input type="text" v-model="item.qty"></td>
+                                    <td class="price"><input type="text" v-model="item.price"></td>
+                                    <td class="total flex">${{ (item.total = item.qty * item.price) }}
+                                        <img @click="deleteInvoiceItem(item.id)" src="../assets/icon-delete.svg" alt="delete icon">
+                                    </td>                                
+                                </tr>
+                            </div>                          
                         </table>
                         <div @click.prevent="addNewInvoiceItem" class="flex button">
                             <img src="../assets/icon-plus.svg" alt="plus icon">
@@ -260,8 +402,9 @@ const closeInvoice = () => {
                         <button type="button" @click="closeInvoice" class="button bg-red">Cancel</button>
                     </div>
                     <div class="right flex">
-                        <button type="submit" @click="saveDraft" class="button bg-dark-purple">Save Draft</button>
-                        <button type="submit" @click="publishInvoice" class="button bg-purple">Create Invoice</button>
+                        <button v-if="!editInvoice" type="submit" @click="saveDraft" class="button bg-dark-purple">Save Draft</button>
+                        <button v-if="!editInvoice" type="submit" @click="publishInvoice" class="button bg-purple">Create Invoice</button>
+                        <button v-if="editInvoice" type="submit" class="button bg-purple">Update Invoice</button>
                     </div>
                 </div>
             </form>

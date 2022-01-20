@@ -9,14 +9,14 @@ const route:any = useRoute();
 
 onMounted(() => {
     // getCurrentInvoice
-    console.log('i am here')  
     store.commit(mutationTypes.SetCurrentInvoice, route.params.invoiceId)
-    console.log('current invoice array', store.getters.getCurrentInvoiceArray.value)
+    // console.log('current invoice array', store.getters.getCurrentInvoiceArray.value)
     
 })
 
-const toggleEditInvoice = async () => {
-    await store.commit(mutationTypes.ToggleEditInvoice)
+const toggleEditInvoice = () => {
+    store.commit(mutationTypes.ToggleEditInvoice)
+    store.commit(mutationTypes.ToggleInvoice)
 }
 
 const deleteInvoice = async (id:any) => {

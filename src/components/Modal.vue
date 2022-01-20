@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useStore } from 'vuex'
+import { computed } from 'vue'
 import * as mutationTypes from '../store/constants/mutations';
 
 const store:any = useStore()
@@ -8,9 +9,16 @@ const closeModal:any = () => {
     store.commit(mutationTypes.ToggleModal)
 }
 
+const editInvoice = computed(() => {
+    return store.getters.getEditInvoice.value
+})
+
 const closeInvoice:any = () => {
     store.commit(mutationTypes.ToggleModal)
     store.commit(mutationTypes.ToggleInvoice)
+    if (editInvoice.value) {
+        store.commit(mutationTypes.ToggleEditInvoice)
+    }
 }
 </script>
 
