@@ -1,9 +1,14 @@
 <template>
     <div>
         <header class="flex">
-            <div class="branding flex">
+            <router-link :to="{ name: 'Home' }">
+                <div class="branding flex">
+                    <img src="../assets/file-invoice-dollar-solid.png" width="30px" height="30px" alt="Branding">
+                </div>
+            </router-link>
+            <!-- <div class="branding flex">
                 <img src="../assets/file-invoice-dollar-solid.png" width="30px" height="30px" alt="Branding">
-            </div>
+            </div> -->
         </header>
     </div>
 </template>

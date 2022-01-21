@@ -31,8 +31,8 @@ let dateOptions:any = {
     day: "numeric"
 };
 
-invoiceDateUnix = Date.now()
-invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
+// invoiceDateUnix = Date.now()
+// invoiceDate = new Date(invoiceDateUnix).toLocaleDateString('en-us', dateOptions)
 
 const checkClick = (e:any) => {
     if (e.target.classList.contains('invoice-wrap')) {
@@ -40,7 +40,9 @@ const checkClick = (e:any) => {
     }
 }
 
-let invoiceListArray:any = ref([])
+let invoiceListArray:any = reactive({
+    invoices: []
+})
 
 let paymentDueDate:any = ref('')
 
@@ -65,42 +67,39 @@ watch(paymentTerms, (oldTerms: any, newTerms: any) => {
 let loading:any = ref(false)
 
 const deleteInvoiceItem:any = async (id:string) => {
-    let newInvoiceItemList: any = JSON.parse(JSON.stringify(invoiceItemList.invoices));
-    invoiceItemList.invoices = newInvoiceItemList.filter((item:any) => item.id != id)
+    if (!editInvoice.value) {
+        let newInvoiceItemList: any = JSON.parse(JSON.stringify(invoiceItemList.invoices));
+        invoiceItemList.invoices = newInvoiceItemList.filter((item:any) => item.id != id)
+    } else {
+        let newInvoiceItemList: any = invoiceListArray.value.invoices;
+        invoiceListArray.value.invoices = newInvoiceItemList.filter((item:any) => item.id != id)
+    }
 }
 
 const calcInvoiceTotal:any = () => {
     if (editInvoice.value) {
-        console.log('invoicelist', JSON.parse(JSON.stringify(invoiceItemList.value)))
-        invoiceListArray = JSON.parse(JSON.stringify(invoiceItemList.value));
         invoiceTotal = 0;
-        invoiceListArray.invoices.forEach((item:any) => {
-            console.log('item', item)
+        JSON.parse(JSON.stringify(invoiceListArray.value)).invoices.forEach((item:any) => {
             invoiceTotal += item.total;
         })
-        // invoiceItemList = invoiceListArray;
     } else {
         invoiceTotal = 0;
         invoiceItemList.invoices.forEach((item:any) => {
-            console.log('item', item)
             invoiceTotal += item.total;
         })
     }
 }
 
 const addNewInvoiceItem:any = async () => {
-    if (editInvoice.value) {
-        console.log('invoicelist', JSON.parse(JSON.stringify(invoiceItemList.value)))
-        invoiceListArray = JSON.parse(JSON.stringify(invoiceItemList.value));
-        console.log('invoiceListArray', invoiceListArray);
-        
-        await invoiceListArray.invoices.push({
+    if (editInvoice.value) {        
+        invoiceListArray.value.invoices.push({
             id: uid(),
             itemName: '',
             qty: '',
             price: 0,
             total: 0,
         })
+        invoiceItemList = invoiceListArray;
     } else {
         invoiceItemList.invoices.push({
             id: uid(),
@@ -114,9 +113,11 @@ const addNewInvoiceItem:any = async () => {
 
 const saveDraft:any = () => {
     invoiceDraft = true
+    invoicePending = false
 }
 
 const publishInvoice:any = () => {
+    invoiceDraft = false
     invoicePending = true
 }
 
@@ -164,8 +165,6 @@ const uploadInvoice:any = async () => {
 }
 
 const updateInvoice:any = async () => {
-    console.log('updating invoice', JSON.parse(JSON.stringify(invoiceItemList.value)));
-    invoiceListArray = JSON.parse(JSON.stringify(invoiceItemList.value));
     if (invoiceListArray.invoices <= 0) {
         alert('Please ensure you filled out work items')
         return;
@@ -190,12 +189,9 @@ const updateInvoice:any = async () => {
         paymentDueDate,
         paymentDueDateUnix,
         productDescription,
-        invoiceItemList,
+        invoiceItemList: invoiceListArray,
         invoiceTotal,
     })
-
-    // console.log('docId', JSON.parse(JSON.stringify(docId.value)))
-    // console.log('route.params.invoiceId', route.params.invoiceId)
 
     const database:any = await updateDoc(doc(db, 'invoices', JSON.parse(JSON.stringify(docId.value))), JSON.parse(JSON.stringify(invoiceDataTemplate)));
 
@@ -207,7 +203,7 @@ const updateInvoice:any = async () => {
     }
 
     await store.dispatch(actionTypes.UpdateInvoice, data);
-    await store.dispatch(actionTypes.GetInvoices);
+    await store.getters.getInvoiceData;
 }
 
 let currentInvoiceArray:any = computed(() => {
@@ -243,30 +239,30 @@ if (!editInvoice.value) {
 }
 
 if (editInvoice.value) {
-    const currentInvoice:any = currentInvoiceArray;
-    docId = ref(currentInvoice.value.docId);
-    console.log('docId', docId.value)
-    billerStreetAddress = ref(currentInvoice.value.billerStreetAddress);
-    billerCity = ref(currentInvoice.value.billerCity);
-    billerZipCode = ref(currentInvoice.value.billerZipCode);
-    billerCountry = ref(currentInvoice.value.billerCountry);
-    clientEmail = ref(currentInvoice.value.clientEmail);
-    clientName = ref(currentInvoice.value.clientName);
-    clientStreetAddress = ref(currentInvoice.value.clientStreetAddress);
-    clientCity = ref(currentInvoice.value.clientCity);
-    clientZipCode = ref(currentInvoice.value.clientZipCode);
-    clientCountry = ref(currentInvoice.value.clientCountry);
-    invoiceDateUnix = ref(currentInvoice.value.invoiceDateUnix);
-    invoiceDate = ref(currentInvoice.value.invoiceDate);
-    paymentDueDateUnix = ref(currentInvoice.value.paymentDueDateUnix);
-    paymentDueDate = ref(currentInvoice.value.paymentDueDate);
-    productDescription = ref(currentInvoice.value.productDescription);
-    paymentTerms = ref(currentInvoice.value.paymentTerms);
-    invoicePending = ref(currentInvoice.value.invoicePending);
-    invoiceDraft = ref(currentInvoice.value.invoiceDraft);
-    invoiceItemList = ref(currentInvoice.value.invoiceItemList);
-    invoiceTotal = ref(currentInvoice.value.invoiceTotal);
-    console.log(`billerStreetAddress ${billerStreetAddress.value}, billerCity ${billerCity.value}, billerZipCode ${billerZipCode.value}, billerCountry ${billerCountry.value}, clientEmail ${clientEmail.value}, clientName ${clientName.value}, clientStreetAddress ${clientStreetAddress.value}, clientCity ${clientCity.value}, clientZipCode ${clientZipCode.value}, clientCountry ${clientCountry.value}, invoiceDateUnix ${invoiceDateUnix.value}, invoiceDate ${invoiceDate.value}, paymentDueDateUnix ${paymentDueDateUnix.value}, paymentDueDate ${paymentDueDate.value}, productDescription ${productDescription.value}, paymentTerms ${paymentTerms.value}, invoicePending ${invoicePending.value}, invoiceDraft ${invoiceDraft.value}, invoiceItemList ${invoiceItemList.value}, invoiceTotal ${invoiceTotal.value}`)
+    const currentInvoiceValue:any = currentInvoiceArray.value;
+    const currentInvoice:any = JSON.parse(JSON.stringify(currentInvoiceValue.value))[0]
+    docId = ref(currentInvoice.docId);
+    billerStreetAddress = ref(currentInvoice.billerStreetAddress);
+    billerCity = ref(currentInvoice.billerCity);
+    billerZipCode = ref(currentInvoice.billerZipCode);
+    billerCountry = ref(currentInvoice.billerCountry);
+    clientEmail = ref(currentInvoice.clientEmail);
+    clientName = ref(currentInvoice.clientName);
+    clientStreetAddress = ref(currentInvoice.clientStreetAddress);
+    clientCity = ref(currentInvoice.clientCity);
+    clientZipCode = ref(currentInvoice.clientZipCode);
+    clientCountry = ref(currentInvoice.clientCountry);
+    invoiceDateUnix = ref(currentInvoice.invoiceDateUnix);
+    invoiceDate = ref(currentInvoice.invoiceDate);
+    paymentDueDateUnix = ref(currentInvoice.paymentDueDateUnix);
+    paymentDueDate = ref(currentInvoice.paymentDueDate);
+    productDescription = ref(currentInvoice.productDescription);
+    paymentTerms = ref(currentInvoice.paymentTerms);
+    invoicePending = ref(currentInvoice.invoicePending);
+    invoiceDraft = ref(currentInvoice.invoiceDraft);
+    invoiceListArray = ref(currentInvoice.invoiceItemList);
+    invoiceTotal = ref(currentInvoice.invoiceTotal);
+    // console.log(`billerStreetAddress ${billerStreetAddress.value}, billerCity ${billerCity.value}, billerZipCode ${billerZipCode.value}, billerCountry ${billerCountry.value}, clientEmail ${clientEmail.value}, clientName ${clientName.value}, clientStreetAddress ${clientStreetAddress.value}, clientCity ${clientCity.value}, clientZipCode ${clientZipCode.value}, clientCountry ${clientCountry.value}, invoiceDateUnix ${invoiceDateUnix.value}, invoiceDate ${invoiceDate.value}, paymentDueDateUnix ${paymentDueDateUnix.value}, paymentDueDate ${paymentDueDate.value}, productDescription ${productDescription.value}, paymentTerms ${paymentTerms.value}, invoicePending ${invoicePending.value}, invoiceDraft ${invoiceDraft.value}, invoiceItemList ${invoiceItemList.value}, invoiceTotal ${invoiceTotal.value}`)
 }
 
 </script>
@@ -278,8 +274,6 @@ if (editInvoice.value) {
                 <loading-icon v-show="loading" />
                 <h1 v-if="!editInvoice">New Invoice</h1>
                 <h1 v-else>Edit Invoice</h1>
-                <!-- Remove this line -->
-                <p v-if="editInvoice">{{ currentInvoiceArray }}</p>
                 <!-- Bill From -->
                 <div class="bill-from flex flex-col">
                     <h4>Bill From</h4>
@@ -367,7 +361,6 @@ if (editInvoice.value) {
                                 <th class="total">Total</th>
                             </tr>
                             <div v-if="!editInvoice">
-                                {{ invoiceItemList }}
                                 <tr class="table-items flex" v-for="(item, index) in invoiceItemList.invoices" :key="index">
                                     <td class="item-name"><input type="text" v-model="item.itemName"></td>
                                     <td class="qty"><input type="text" v-model="item.qty"></td>
@@ -378,7 +371,6 @@ if (editInvoice.value) {
                                 </tr>
                             </div>  
                             <div v-else>
-                                {{ invoiceListArray }}
                                 <tr class="table-items flex" v-for="(item, index) in invoiceListArray.invoices" :key="index">
                                     <td class="item-name"><input type="text" v-model="item.itemName"></td>
                                     <td class="qty"><input type="text" v-model="item.qty"></td>

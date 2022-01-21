@@ -3,13 +3,15 @@ import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex'
 import * as mutationTypes from '../store/constants/mutations';
+import * as actionTypes from '../store/constants/actions';
 
 const store:any = useStore();
 const route:any = useRoute();
 
-onMounted(() => {
+onMounted( async () => {
     // getCurrentInvoice
-    store.commit(mutationTypes.SetCurrentInvoice, route.params.invoiceId)
+    // await store.getters.getInvoiceData;
+    // store.commit(mutationTypes.SetCurrentInvoice, route.params.invoiceId)
     // console.log('current invoice array', store.getters.getCurrentInvoiceArray.value)
     
 })
@@ -19,19 +21,21 @@ const toggleEditInvoice = () => {
     store.commit(mutationTypes.ToggleInvoice)
 }
 
-const deleteInvoice = async (id:any) => {
-    await store.commit(mutationTypes.DeleteInvoice, id)
+const deleteInvoice = (id:any) => {
+    console.log('id', id)
+    // store.commit(mutationTypes.DeleteInvoice, id)
 }
 
-const updateStatusToPaid = async (id:any) => {
-    await store.commit(mutationTypes.UpdateStatusToPaid, id)
+const updateStatusToPaid = (id:any) => {
+    store.commit(mutationTypes.UpdateStatusToPaid, id)
 }
 
-const updateStatusToPending = async (id:any) => {
-    await store.commit(mutationTypes.UpdateStatusToPending, id)
+const updateStatusToPending = (id:any) => {
+    store.commit(mutationTypes.UpdateStatusToPending, id)
 }
 
 let currentInvoice:any = computed( () => {
+    store.commit(mutationTypes.SetCurrentInvoice, route.params.invoiceId)
     return JSON.parse(JSON.stringify(store.getters.getCurrentInvoiceArray.value))
 })
 

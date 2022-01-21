@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 import * as actionTypes from './constants/actions'
 import * as mutationTypes from './constants/mutations'
 import { computed } from 'vue'
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import db from '../firebase/firebaseInit';
 import { ToggleInvoice, ToggleEditInvoice } from './constants/mutations';
 
@@ -90,7 +90,7 @@ const store = createStore({
     actions: {
         async [actionTypes.GetInvoices] ({ commit, state }) {
             const getData:any = await getDocs(collection(db, 'invoices'));
-            getData.forEach((doc:any) => {
+            await getData.forEach((doc:any) => {
                 if (!state.invoiceData.some((invoice:any) => invoice.docId === doc.id)) {
                     const data:any = {
                         docId: doc.id,
@@ -130,6 +130,25 @@ const store = createStore({
             commit(mutationTypes.ToggleEditInvoice)
             commit(mutationTypes.SetCurrentInvoice, routeId)
         },
+        async [actionTypes.DeleteInvoice] ({ commit }, docId ) {
+            const getInvoice = await deleteDoc(doc(db, 'invoices', docId));
+            commit(mutationTypes.DeleteInvoice, docId);
+        },
+        async [actionTypes.UpdateStatusToPaid] ({ commit }, docId ) {
+            const getInvoice = await updateDoc(doc(db, 'invoices', docId), {
+                invoicePaid: true,
+                invoicePending: false,
+            });
+            commit(mutationTypes.UpdateStatusToPaid, docId);
+        },
+        async [actionTypes.UpdateStatusToPending] ({ commit }, docId ) {
+            const getInvoice = await updateDoc(doc(db, 'invoices', docId), {
+                invoicePaid: false,
+                invoicePending: true,
+                invoiceDraft: false,
+            });
+            commit(mutationTypes.UpdateStatusToPending, docId);
+        }
     },
 
 })

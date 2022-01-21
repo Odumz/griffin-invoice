@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 const props:any = defineProps({
     invoice: Object,
 })
+props.invoice = ref({})
 </script>
 
 <template>
