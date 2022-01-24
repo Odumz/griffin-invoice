@@ -32,7 +32,7 @@ const modalActive: any = computed(() => {
 
 <template>
 <div v-if="getInvoicesLoaded">
-  <div class="app flex">
+  <div class="app md:flex hidden">
     <Navigation />
     <div class="app-content flex flex-col">
       <Modal v-if="modalActive" />
@@ -41,6 +41,14 @@ const modalActive: any = computed(() => {
       </transition>
       <router-view />
     </div>
+  </div>
+  <div class="mobile-message flex flex-col md:hidden">
+    <h2>
+      Sorry, this app is not available on mobile devices.
+    </h2>
+    <p>
+      Please use a tablet or laptop to view this app.
+    </p>
   </div>
 </div>
 </template>
@@ -57,6 +65,14 @@ const modalActive: any = computed(() => {
   @apply bg-dark-blue flex-col min-h-screen dl:flex-row;
   .app-content {
     @apply py-0 px-5 flex-[1] relative;  
+  }
+}
+
+.mobile-message {
+  @apply text-center justify-center items-center h-screen bg-dark-blue text-white;
+
+  p {
+    @apply mt-4;
   }
 }
 
