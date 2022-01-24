@@ -124,6 +124,7 @@ const store = createStore({
             commit(mutationTypes.InvoicesLoaded);
         },
         async [actionTypes.UpdateInvoice] ({ commit, dispatch }, { docId, routeId }) {
+            
             commit(mutationTypes.DeleteInvoice, docId);
             await dispatch(actionTypes.GetInvoices);
             commit(mutationTypes.ToggleInvoice)

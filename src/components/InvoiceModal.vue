@@ -195,12 +195,13 @@ const updateInvoice:any = async () => {
 
     const database:any = await updateDoc(doc(db, 'invoices', JSON.parse(JSON.stringify(docId.value))), JSON.parse(JSON.stringify(invoiceDataTemplate)));
 
-    loading.value = false;
-
     const data:any = {
         docId,
         routeId: route.params.invoiceId,
     }
+
+    console.log('data', data)
+    loading.value = false;
 
     await store.dispatch(actionTypes.UpdateInvoice, data);
     await store.getters.getInvoiceData;
